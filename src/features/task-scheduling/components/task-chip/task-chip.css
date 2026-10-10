@@ -1,0 +1,130 @@
+.task-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-left: 3px solid var(--chip-color);
+  border-radius: 7px;
+  background: var(--chip-soft);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 550;
+  line-height: 1.25;
+  text-align: left;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.task-chip:hover {
+  background: color-mix(in srgb, var(--chip-color) 22%, white);
+  box-shadow: var(--shadow-sm);
+}
+
+.task-chip:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.task-chip:active {
+  cursor: grabbing;
+}
+
+.task-chip.is-dragging {
+  opacity: 0.32;
+}
+
+.chip-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--chip-color) 75%, black);
+  font-size: 10px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.chip-time svg {
+  width: 11px;
+  height: 11px;
+}
+
+.chip-time--all-day {
+  padding: 0 3px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--chip-color) 25%, white);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.chip-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-chip--completed .chip-title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--chip-color) 60%, transparent);
+}
+
+.chip-check {
+  flex-shrink: 0;
+  margin-right: 3px;
+  color: var(--chip-color);
+  vertical-align: -2px;
+}
+
+/* Copia flotante durante el arrastre */
+.task-chip--overlay {
+  width: 176px;
+  pointer-events: none;
+  cursor: grabbing;
+  opacity: 0.96;
+  transform: rotate(-1.5deg);
+  border-color: color-mix(in srgb, var(--chip-color) 45%, transparent);
+  background: color-mix(in srgb, var(--chip-color) 22%, white);
+  box-shadow: var(--shadow-lg);
+}
+
+@media (max-width: 900px) {
+  .task-chip {
+    padding: 3px 5px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .chip-time {
+    font-size: 9.5px;
+  }
+
+  .chip-time svg {
+    display: none;
+  }
+
+  /* En celdas estrechas solo cabe la hora (o «Día»): el título completo
+     está disponible en la hoja del día. Evita fragmentos de 1 carácter. */
+  .day-cell-tasks .chip-title {
+    display: none;
+  }
+
+  .day-cell-tasks .task-chip {
+    justify-content: flex-start;
+  }
+}

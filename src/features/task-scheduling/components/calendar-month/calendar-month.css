@@ -1,0 +1,38 @@
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+  padding-bottom: 6px;
+}
+
+.weekday {
+  padding: 0 10px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  text-align: right;
+}
+
+/* El header de fin de semana empareja con la columna tintada de abajo. */
+.weekday.is-weekend {
+  color: var(--text);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-auto-rows: minmax(112px, auto);
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Contenido de la celda: day-cell.css define la base */
+.calendar-month {
+  min-width: 0;
+}
