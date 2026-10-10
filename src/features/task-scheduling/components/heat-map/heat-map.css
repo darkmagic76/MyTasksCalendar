@@ -1,0 +1,196 @@
+/* --- Mapa de calor de actividad (spec 001) --- */
+
+.heat-map {
+  margin-top: 14px;
+
+  /* Ancho común de rejilla, rótulos, leyenda y texto. */
+  --hm-width: 440px;
+
+  /* 6 estados del mismo matiz, ordenados por luminosidad (RNF): de la celda
+     sin actividad (más clara) a la de más completadas (más saturada).
+     Tokens compartidos por la rejilla y la leyenda (RF-10). */
+  --hm-cero: color-mix(in srgb, var(--text) 6%, var(--surface));
+  --hm-0: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  --hm-1: color-mix(in srgb, var(--primary) 28%, var(--surface));
+  --hm-2: color-mix(in srgb, var(--primary) 45%, var(--surface));
+  --hm-3: color-mix(in srgb, var(--primary) 65%, var(--surface));
+  --hm-4: color-mix(in srgb, var(--primary) 85%, var(--surface));
+}
+
+/* 12 columnas (semanas) × 7 filas (lun..dom), flujo vertical: el modelo
+   entrega los días seguidos desde un lunes. */
+.hm-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-flow: column;
+  gap: 3px;
+  width: 100%;
+  max-width: var(--hm-width);
+}
+
+.hm-cell {
+  position: relative; /* ancla del tooltip (RF-8) */
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.hm-cell:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.hm-cell.is-level-cero,
+.hm-swatch.is-level-cero {
+  background: var(--hm-cero);
+}
+
+.hm-cell.is-level-0,
+.hm-swatch.is-level-0 {
+  background: var(--hm-0);
+}
+
+.hm-cell.is-level-1,
+.hm-swatch.is-level-1 {
+  background: var(--hm-1);
+}
+
+.hm-cell.is-level-2,
+.hm-swatch.is-level-2 {
+  background: var(--hm-2);
+}
+
+.hm-cell.is-level-3,
+.hm-swatch.is-level-3 {
+  background: var(--hm-3);
+}
+
+.hm-cell.is-level-4,
+.hm-swatch.is-level-4 {
+  background: var(--hm-4);
+}
+
+/* Hoy: anillo de marca alrededor del nivel, sin pisar su color (RF-12). */
+.hm-cell.is-today {
+  outline: 2px solid var(--primary-strong);
+  outline-offset: 1px;
+}
+
+.hm-cell.is-today:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+/* Rótulos de mes: una rejilla de 12 columnas alineada con la de arriba. */
+.hm-months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  max-width: var(--hm-width);
+  margin-top: 5px;
+}
+
+.hm-month {
+  font-size: 0.7em;
+  font-weight: 550;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+/* --- Tooltip (RF-8): puro CSS, sobre la celda, sin JS (plan D5) --- */
+
+.hm-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: max-content;
+  max-width: min(240px, 46vw); /* que quepa en pantallas estrechas */
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: var(--text);
+  color: var(--surface);
+  font-size: 0.86em;
+  font-weight: 500;
+  line-height: 1.35;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+/* En táctil no hay tooltip (RF-8); el foco de teclado sí lo muestra (RF-13). */
+@media (hover: hover) {
+  .hm-cell:hover .hm-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.hm-cell:focus-visible .hm-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Primera columna: dentro por la izquierda; última: dentro por la derecha
+   (para no desbordar el contenedor). */
+.hm-cell:nth-child(-n + 7) .hm-tooltip {
+  left: 0;
+  transform: none;
+}
+
+.hm-cell:nth-last-child(-n + 7) .hm-tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+/* Pantallas estrechas: desde la columna 8 (el hijo 50 = 7×7 + 1) el tooltip
+   se alinea a la derecha para que nunca desborde el viewport (RNF). */
+@media (max-width: 699px) {
+  .hm-cell:nth-child(n + 50) .hm-tooltip {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+}
+
+/* --- Leyenda (RF-10): siempre visible, 6 muestras de cero a nivel 4 --- */
+
+.hm-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: var(--hm-width);
+  margin-top: 10px;
+  font-size: 0.75em;
+  font-weight: 550;
+  color: var(--text-muted);
+}
+
+.hm-legend-scale {
+  display: flex;
+  gap: 3px;
+}
+
+.hm-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* --- Texto de invitación (RF-9, lo desactiva RF-11 vía el modelo) --- */
+
+.hm-empty {
+  max-width: var(--hm-width);
+  margin: 10px 0 0;
+  font-size: 0.93em;
+  line-height: 1.45;
+  color: var(--text-muted);
+}

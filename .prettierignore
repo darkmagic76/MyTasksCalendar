@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+test-results
+playwright-report
+screenshots
+package-lock.json
+.husky/_

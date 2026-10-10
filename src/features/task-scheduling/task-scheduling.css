@@ -1,0 +1,212 @@
+.task-scheduling {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 18px 20px 32px;
+}
+
+/* --- Cabecera --- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.brand-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  margin: 1px 0 0;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.storage-warning {
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--danger) 10%, white);
+  color: var(--danger);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+/* --- Toolbar: navegación del mes + filtros --- */
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* El mes es el titular de la pantalla: display tipográfico con el año
+   recogido (spans que genera task-scheduling.tsx). */
+.month-title {
+  min-width: 158px;
+  margin: 0 6px;
+  color: var(--text);
+  font-size: clamp(21px, 4.6vw, 34px);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.month-year {
+  margin-left: 0.22em;
+  color: var(--text-faint);
+  font-size: 0.58em;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+}
+
+/* --- Layout principal: calendario + bandeja --- */
+.app-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 316px;
+  gap: 14px;
+  align-items: start;
+}
+
+.calendar-panel {
+  min-width: 0;
+}
+
+.tray-panel {
+  position: sticky;
+  top: 14px;
+  min-width: 0;
+}
+
+/* Mapa de calor (spec 001): bajo el layout, a ancho completo y a la
+   izquierda; en móvil, por ir después de <main>, se apila tras la bandeja. */
+.heat-map-section {
+  min-width: 0;
+}
+
+/* Indicación sutil de que hay un arrastre en curso */
+.task-scheduling.is-dragging .day-cell:not(.is-over):not(.is-outside) {
+  background: var(--surface-hover);
+}
+
+.task-scheduling.is-dragging .task-tray:not(.is-over) {
+  border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+}
+
+/* --- Responsive --- */
+@media (max-width: 1100px) {
+  .app-layout {
+    grid-template-columns: minmax(0, 1fr) 288px;
+  }
+}
+
+@media (max-width: 900px) {
+  .task-scheduling {
+    gap: 12px;
+    padding: 14px 12px 28px;
+  }
+
+  .app-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .month-nav {
+    justify-content: space-between;
+    /* Ancla el ancho: sin esto, el min-content de los filtros infla la
+       toolbar y toda la página se desborda en pantallas estrechas. */
+    width: 100%;
+    min-width: 0;
+  }
+
+  .month-title {
+    flex: 1;
+    min-width: 0;
+    /* El clamp del base ya cubre estrecho; aquí solo evitamos desbordes. */
+    overflow: hidden;
+  }
+
+  .app-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tray-panel {
+    position: static;
+  }
+
+  .brand-title {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+
+  .app-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .storage-warning {
+    font-size: 10.5px;
+  }
+}
