@@ -5,6 +5,7 @@ No duplicar README ni AGENTS.md (características, comandos, árbol y persistenc
 
 ## Estado actual
 
+- **Spec 002 («minutos y racha») DESCARTADA y revertida el 13/10/2026** (decisión del usuario tras 5/8 tareas). Ya no existe código suyo: `validate` 31 tests y `e2e` 28+4 en verde, 001 intacta. **No volver a intentar esa spec tal cual**; si algún día se quiere la racha, escribir una **spec 003 solo-racha** (sin minutos, sin RF-4) desde cero.
 - v1 + **mapa de calor de actividad** funcionando: organizador de tareas en calendario mensual con drag & drop, guardado en localStorage y rejilla de 12 semanas bajo el calendario.
 - `AGENTS.md` ampliado con la sección "Repo facts" (comandos, e2e, quirks de TS/lint) verificada contra la config.
 - Diseño revisado con el skill frontend-design: `validate` + build + e2e en verde tras los cambios.
@@ -25,6 +26,9 @@ No duplicar README ni AGENTS.md (características, comandos, árbol y persistenc
 
 ## Aprendizajes y errores a evitar
 
+- **Por qué se descartó la spec 002** (lección de alcance, no de código): (a) su RF-4 impedía completar una tarea programada para las 18:00 a las 10:00, o sea rompía el uso normal; (b) empapaba dos features distintos —registro de minutos y racha— que solo comparten `completedDate`; (c) parte de sus RF (RF-2 y la precarga de hoy desde la cabecera) ya existían y ya estaban cubiertos por la 001, así que inflaba el alcance. Antes de implementar, **comprobar que un requisito no forbids algo razonable**, y **una spec = una feature**.
+- Una spec que obliga a inventar justificaciones para no romperla tiene un problema de diseño, no de redacción.
+
 - Repasar la spec como QA antes del plan compensa: detectó 29 hallazgos, incluido un error de aritmética («78 celdas» cuando 12×7=84) y un texto de estado vacío que mentía al usuario con tareas sin fecha.
 - Verificación visual: `getComputedStyle(...).backgroundColor` devuelve `color(srgb …)` (no `rgb(…)`) en `color-mix` → los parsers `rgb()` fallan. Y la semilla solo tiene niveles `cero`/`0`: comparar la leyenda solo contra los niveles presentes, no los 6.
 - Matar el preview: `pkill -f "[v]ite preview"` no matchea el cmdline real (`…/vite.js preview`); usar `pkill -f "[v]ite.js preview"` o matar por pid/puerto. Si la cmdline propia contiene el patrón literal, el `pkill` mata el propio shell.
@@ -35,8 +39,8 @@ No duplicar README ni AGENTS.md (características, comandos, árbol y persistenc
 
 ## Tras el cierre de la spec 001
 
-- BLOQUEO 2026-10-10: los subagentes (@planner/@reviewer) no arrancan («OpenCode's free tier can only be used from within OpenCode», 2 intentos). Flujo SDD de la spec 002 (objetivo semanal, pedida por el usuario) en pausa: contexto ya reunido (Task sin duración, siguiente carpeta `specs/002-weekly-goal/`). 3er intento con el mismo modelo del coordinador también falla: el tier gratuito no lanza subagentes desde esta sesión. ACORDADO con el usuario: reabrir la sesión desde OpenCode (app/CLI) y retomar ahí la Fase 1 (llamar a @planner para `specs/002-weekly-goal/spec.md` con el contexto ya reunido).
+- BLOQUEO 2026-10-10 (resuelto): los subagentes (@planner/@reviewer) no arrancaban con el tier gratuito; el flujo se reanudó sin ellos. Ninguna spec 002 sigue pendiente: la de minutos/racha se descartó.
 
-1. Rama **`main`** (renombrada desde `master`, sin remoto). El historial ya tenía 5 commits: el cierre de la 001 se commiteó con alcance «Todo» (spec + tooling `.opencode/`/`opencode.json` + `pnpm-*`; `package.json` sin cambios; el hook pre-commit ejecuta `validate`).
-2. Cualquier requisito nuevo va primero a una spec (`specs/002-…/`) y después a código: la spec manda (Constitución 2).
+1. Rama **`develop`**, sin remoto (ojo: antes `MEMORY.md` decía `main`; corregir si cambia). El hook pre-commit ejecuta `validate`, así que un commit con la suite rota es imposible; **`npm run e2e` no lo cubre**, hay que acordarse de lanzarlo a mano.
+2. Cualquier requisito nuevo va primero a una spec (`specs/002-…/`) y después a código: la spec manda (Constitución 2). La siguiente sería `specs/002-…/` otra vez, pero **solo racha** si se retoma.
 3. Proceso habitual: una tarea cada vez — rojo → verde → `npm run validate` → marcar casilla → parar (y esperar «dale»).
